@@ -1,7 +1,15 @@
 <script setup>
 import Pagination from "@/components/Pagination.vue";
 import ProductCard from "@/components/ProductCard.vue";
-import { onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref } from "vue";
+import {
+  onBeforeMount,
+  onBeforeUnmount,
+  onBeforeUpdate,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  ref,
+} from "vue";
 
 const page = ref(1);
 
@@ -27,6 +35,16 @@ onBeforeUpdate(() => {
 onUpdated(() => {
   console.log("Component has been updated");
   // lakukan tugas setelah pembaruan, jika diperlukan
+});
+
+onBeforeUnmount(() => {
+  console.log("Component will be unmounted soon");
+  // lakukan pembersihan atau persiapan sebelum unmounting
+});
+
+onUnmounted(() => {
+  console.log("component has been unmounted");
+  // lakukan tugas terakhir sebelum dihapus
 });
 </script>
 
