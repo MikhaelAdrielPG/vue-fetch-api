@@ -1,57 +1,11 @@
 <script setup>
 import Pagination from "@/components/Pagination.vue";
 import ProductCard from "@/components/ProductCard.vue";
-import {
-  onBeforeMount,
-  onBeforeUnmount,
-  onBeforeUpdate,
-  onMounted,
-  onUnmounted,
-  onUpdated,
-  ref,
-} from "vue";
-
-const page = ref(1);
-
-function nextPage() {
-  page.value++;
-}
-
-onBeforeMount(() => {
-  console.log("Component will be mounted soon");
-  // lakukan persiapan atau efek samping sebelum mounting
-});
-
-onMounted(() => {
-  console.log("Component has been mounted");
-  // lakukan tugas setelah mounting, seperti fetching data
-});
-
-onBeforeUpdate(() => {
-  console.log("Component will be updated soon");
-  // lakukan persiapan atau efek samping sebelum update
-});
-
-onUpdated(() => {
-  console.log("Component has been updated");
-  // lakukan tugas setelah pembaruan, jika diperlukan
-});
-
-onBeforeUnmount(() => {
-  console.log("Component will be unmounted soon");
-  // lakukan pembersihan atau persiapan sebelum unmounting
-});
-
-onUnmounted(() => {
-  console.log("component has been unmounted");
-  // lakukan tugas terakhir sebelum dihapus
-});
+import { ref } from "vue";
 </script>
 
 <template>
   <main>
-    {{ page }}
-    <button @click="nextPage">Next</button>
     <div class="product-grid">
       <ProductCard />
     </div>
