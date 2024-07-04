@@ -4,29 +4,40 @@ import axios from "axios";
 
 import Pagination from "@/components/Pagination.vue";
 import ProductCard from "@/components/ProductCard.vue";
+import Loading from "@/components/Loading.vue";
 
 const products = ref([]);
 const page = ref(1);
 const limit = ref(8);
+const isLoading = ref(true);
 
 const API_URL = computed(
   () =>
     `http://localhost:3000/products?_page=${page.value}&_per_page=${limit.value}`
 );
 
-async function fetchProducts() {
-  products.value = await axios.get(API_URL.value).then((res) => res.data);
+async function fetchData() {
+  const response = await axios.get(API_URL.value);
+  return response.data;
 }
 
-onMounted(fetchProducts);
+async function loadProducts() {
+  isLoading.value = true;
+  try {
+    products.value = await fetchData();
+  } finally {
+    isLoading.value = false;
+  }
+}
 
-watch(page, fetchProducts);
+onMounted(loadProducts);
+
+watch(page, loadProducts);
 
 function changePage(newPage) {
   if (newPage < 1) {
     newPage = 1;
-  }
-  if (newPage > products.value.pages) {
+  } else if (newPage > products.value.pages) {
     newPage = products.value.pages;
   }
   page.value = newPage;
@@ -35,18 +46,23 @@ function changePage(newPage) {
 
 <template>
   <main>
-    <div class="product-grid">
-      <ProductCard
-        v-for="product in products.data"
-        :key="product.id"
-        :product="product"
+    <div v-if="isLoading">
+      <Loading />
+    </div>
+    <div v-else>
+      <div class="product-grid">
+        <ProductCard
+          v-for="product in products.data"
+          :key="product.id"
+          :product="product"
+        />
+      </div>
+      <Pagination
+        :page="page"
+        :totalPages="products.pages"
+        @change-page="changePage"
       />
     </div>
-    <Pagination
-      :page="page"
-      :totalPages="products.pages"
-      @change-page="changePage"
-    />
   </main>
 </template>
 
