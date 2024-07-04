@@ -1,75 +1,68 @@
 <script setup>
-import { ref } from "vue";
-import axios from "axios";
+import { ref, defineEmits, watchEffect, computed } from "vue";
 
-const emit = defineEmits(["add-product"]);
-const fetchData = () => {
-  emit("add-product");
-};
-
-const showForm = ref(false);
-const newProduct = ref({
-  title: "",
-  description: "",
-  price: "",
-  image: "",
+const props = defineProps({
+  product: Object,
 });
 
-function showAddForm() {
-  showForm.value = true;
-}
+const title = ref(props.product?.title || "");
+const description = ref("");
+const price = ref("");
+const image = ref("");
+const id = ref("");
 
-function closeForm() {
-  showForm.value = false;
-}
+watchEffect(() => {
+  title.value = props.product?.title;
+  description.value = props.product?.description;
+  price.value = props.product?.price;
+  image.value = props.product?.image;
+  id.value = props.product?.id;
+});
 
-async function addProduct() {
-  try {
-    const response = await axios.post(
-      "http://localhost:3000/products",
-      newProduct.value
-    );
-    console.log("Product added:", response.data);
-    // Clear the form and close it after adding the product
-    Object.keys(newProduct.value).forEach((key) => {
-      newProduct.value[key] = "";
-    });
-    showForm.value = false;
-    // Fetch data again to update the product list
-    fetchData();
-  } catch (error) {
-    console.error("Error adding product:", error);
+const showForm = ref(false);
+const isUpdate = computed(() => !!props.product);
+
+const emit = defineEmits(["create-product", "update-product"]);
+
+function saveProduct() {
+  const formData = {
+    title: title.value,
+    description: description.value,
+    price: price.value,
+    image: image.value,
+  };
+  if (isUpdate.value) {
+    emit("update-product", formData);
+  } else {
+    emit("create-product", formData);
   }
 }
 </script>
 
 <template>
-  <div class="add-product">
-    <button @click="showAddForm">Add Product</button>
+  <div class="form-container">
+    <button @click="showForm = !showForm">
+      {{ isUpdate ? "Edit" : "Add" }} Product
+    </button>
     <div v-if="showForm" class="product-form">
-      <form @submit.prevent="addProduct">
+      <form @submit.prevent="saveProduct">
         <label for="title">Title:</label>
-        <input type="text" id="title" v-model="newProduct.title" required />
+        <input type="text" id="title" v-model="title" required />
         <label for="description">Description:</label>
-        <input
-          type="text"
-          id="description"
-          v-model="newProduct.description"
-          required
-        />
+        <input type="text" id="description" v-model="description" required />
         <label for="price">Price:</label>
-        <input type="number" id="price" v-model="newProduct.price" required />
+        <input type="number" id="price" v-model="price" required />
         <label for="image">Image:</label>
-        <input type="text" id="image" v-model="newProduct.image" required />
-        <button type="submit">Add</button>
-        <button type="button" @click="closeForm">Close</button>
+        <input type="text" id="image" v-model="image" required />
+        <button type="submit">Save</button>
+        <button type="button" @click="showForm = false">Close</button>
       </form>
     </div>
   </div>
 </template>
 
 <style scoped>
-.add-product {
+.form-container {
   text-align: center;
   margin-top: 20px;
   display: flex;
@@ -79,7 +72,7 @@ async function addProduct() {
   margin-bottom: 20px;
 }
 
-.add-product button {
+.form-container button {
   padding: 10px 20px;
   margin-top: 10px;
   background-color: #28a745;
@@ -90,16 +83,16 @@ async function addProduct() {
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.add-product button:hover {
+.form-container button:hover {
   background-color: #218838;
   transform: translateY(-2px);
 }
 
-.add-product button:focus {
+.form-container button:focus {
   outline: none;
 }
 
-.add-product button:active {
+.form-container button:active {
   transform: translateY(1px);
   background-color: #1e7e34;
 }

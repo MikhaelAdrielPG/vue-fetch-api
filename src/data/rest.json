@@ -1,13 +1,6 @@
 {
   "products": [
     {
-      "id": "1",
-      "title": "Smartphone Galaxy S22",
-      "description": "The latest flagship smartphone with advanced camera features and 5G connectivity.",
-      "price": 899.99,
-      "image": "https://via.placeholder.com/150"
-    },
-    {
       "id": "2",
       "title": "Laptop ProBook X360",
       "description": "A versatile 2-in-1 laptop with a powerful processor and long-lasting battery life.",
