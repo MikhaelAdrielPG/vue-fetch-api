@@ -2,10 +2,27 @@
 import Pagination from "@/components/Pagination.vue";
 import ProductCard from "@/components/ProductCard.vue";
 import { ref } from "vue";
+import axios from "axios";
+
+const products = ref([]);
+
+// products.value = await axios
+//   .get("http://localhost:3000/products")
+//   .then((res) => res.data);
+// console.log(products.value);
+
+async function fetchData() {
+  const response = await axios.get("http://localhost:3000/products");
+  products.value = response.data;
+  console.log(products.value);
+}
+
+fetchData();
 </script>
 
 <template>
   <main>
+    {{ products }}
     <div class="product-grid">
       <ProductCard />
     </div>
