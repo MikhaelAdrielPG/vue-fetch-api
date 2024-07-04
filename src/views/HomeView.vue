@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import axios from "axios";
 
 import Pagination from "@/components/Pagination.vue";
@@ -8,14 +8,19 @@ import ProductCard from "@/components/ProductCard.vue";
 const products = ref([]);
 const page = ref(1);
 const limit = ref(8);
-const API_URL = `http://localhost:3000/products?_page=${page.value}&_per_page=${limit.value}`;
 
-products.value = await axios.get(API_URL).then((res) => res.data);
+const API_URL = computed(
+  () =>
+    `http://localhost:3000/products?_page=${page.value}&_per_page=${limit.value}`
+);
 
-watch(page, async () => {
-  products.value = await axios.get(API_URL).then((res) => res.data);
-  console.log("fetch");
-});
+async function fetchProducts() {
+  products.value = await axios.get(API_URL.value).then((res) => res.data);
+}
+
+onMounted(fetchProducts);
+
+watch(page, fetchProducts);
 
 function changePage(newPage) {
   if (newPage < 1) {
@@ -26,14 +31,6 @@ function changePage(newPage) {
   }
   page.value = newPage;
 }
-
-// async function fetchData() {
-// 	const response = await axios.get('http://localhost:3000/products');
-// 	products.value = response.data;
-// 	console.log(products.value);
-// }
-
-// fetchData();
 </script>
 
 <template>
