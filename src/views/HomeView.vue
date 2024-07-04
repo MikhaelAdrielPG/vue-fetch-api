@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch, computed } from "vue";
+import { ref, watchEffect } from "vue";
 import axios from "axios";
 
 import Pagination from "@/components/Pagination.vue";
@@ -11,37 +11,32 @@ const page = ref(1);
 const limit = ref(8);
 const isLoading = ref(true);
 
-const API_URL = computed(
-  () =>
-    `http://localhost:3000/products?_page=${page.value}&_per_page=${limit.value}`
-);
-
-async function fetchData() {
-  const response = await axios.get(API_URL.value);
-  return response.data;
-}
-
-async function loadProducts() {
-  isLoading.value = true;
+const fetchData = async () => {
+  const API_URL = `http://localhost:3000/products?_page=${page.value}&_per_page=${limit.value}`;
   try {
-    products.value = await fetchData();
+    const response = await axios.get(API_URL);
+    return response.data;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
-onMounted(loadProducts);
+watchEffect(() => {
+  isLoading.value = true;
+  fetchData().then((data) => {
+    products.value = data;
+  });
+});
 
-watch(page, loadProducts);
-
-function changePage(newPage) {
+const changePage = (newPage) => {
   if (newPage < 1) {
     newPage = 1;
-  } else if (newPage > products.value.pages) {
+  }
+  if (newPage > products.value.pages) {
     newPage = products.value.pages;
   }
   page.value = newPage;
-}
+};
 </script>
 
 <template>

@@ -3,13 +3,7 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <!-- <RouterLink to="/">Home</RouterLink>
-	<RouterLink to="/About">About</RouterLink> -->
   <RouterView />
-  <!-- <Suspense>
-		<template #default> <Home /> </template>
-		<template #fallback> Loading... </template>
-	</Suspense> -->
 </template>
 
 <style scoped></style>
